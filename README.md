@@ -1,2 +1,2 @@
-This is a project that is under alpha.
-There is almost nothing to see here.
+How to use this project:
+run GUI.py using a basic python interpreter
