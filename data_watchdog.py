@@ -17,11 +17,13 @@ class DataWatchdog(object):
         self.targetCodex = pd.DataFrame.empty
         #getting the data for the first time using the constant DATA_PATH
         self.readFiles(DATA_PATH)
-
+    
     #the method used to access and read the data file
-    def readFiles(self, path):
+    def readFiles(self, path, queue = None):
         self.readData(path)
         self.readCodex(path)
+        if queue is not None:
+            queue.put([self.planData, self.execData, self.placementData, self.jobCodex, self.targetCodex])
     
     def readData(self, path):
         #setting a try/catch block in order to make sure the program won't crash if the files couldn't be loaded as intended
@@ -45,7 +47,7 @@ class DataWatchdog(object):
             path(f"Codex file doesn't exist in the directory {path}")
     
     #the main loop method where we will set up the watchdog to read changes that happens to our data file directory
-    def processUpdate(self):
+    def processUpdate(self, queue):
         #condiguring a logger (running on a seperate thread so that messaged could still be displayed with the watchdog thread lock)
         logging.basicConfig(level = logging.INFO, format = '%(asctime)s - %(message)s', datefmt = '%Y-%m-%d %H:%M:%S')
 
@@ -54,11 +56,11 @@ class DataWatchdog(object):
 
         #setting the event handler for our watchdog.
         #First, making it a pattern matching event handler that will only look at Excel files
-        event_handler = PatternMatchingEventHandler(patterns = ["*.xlsx"], ignore_patterns = [], ignore_directories = True)
+        event_handler = PatternMatchingEventHandler(patterns = ["Data*.xlsx"], ignore_patterns = [], ignore_directories = True)
         #Second, replacing the on_created and on_modified methods with readFiles
         #This will make the watchdog try and read the data files everytime an Excel file is created or modified
-        event_handler.on_created = self.readFiles(DATA_PATH)
-        event_handler.on_modified = self.readFiles(DATA_PATH)
+        event_handler.on_created = self.readFiles(DATA_PATH, queue)
+        event_handler.on_modified = self.readFiles(DATA_PATH, queue)
 
         #setting up the observer (a.k.a the actual watchdog), and passing our event_handler and path to it using schedule
         observer = Observer()
@@ -70,7 +72,7 @@ class DataWatchdog(object):
         #TODO: try setting up a flag instead
         try:
             while True:
-                sleep(10)
+                sleep(1)
         except KeyboardInterrupt:
             observer.stop()
         observer.join()
@@ -82,7 +84,7 @@ class DataWatchdog(object):
     #a simple method to access the codex from other classes
     def getCodex(self) -> List[pd.DataFrame]:
         return [self.jobCodex, self.targetCodex]
-        
+
 
 if __name__ == "__main__":
     inst = DataWatchdog()

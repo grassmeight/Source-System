@@ -2,17 +2,20 @@ from utility import *
 
 class DataAnalyst(object):
     def __init__(self, plan_data: pd.DataFrame, exec_data: pd.DataFrame, placement_data: pd.DataFrame, job_codex: pd.DataFrame, target_codex: pd.DataFrame) -> None:
+        self.runAnalysis(plan_data, exec_data, placement_data, job_codex, target_codex)
+
+    def runAnalysis(self, plan_data: pd.DataFrame, exec_data: pd.DataFrame, placement_data: pd.DataFrame, job_codex: pd.DataFrame, target_codex: pd.DataFrame) -> None:
         #decoding the target (יעד) into a job and a branch (מקצוע וסמכות)
         exec_data = self.execDecoding(exec_data, job_codex, target_codex)
-        #removing all the unnecessary data from the execution data 
+        #removing all the unnecessary data from the execution data
         exec_data = exec_data[exec_data['מקצוע'] != 'לא נספר כתוכנית']
         #getting the jobs data by calling the mergeJobsData method. Also saving the data in a long data format.
         self.jobsData = self.mergeJobsData(plan_data, exec_data, placement_data)
         self.jobsDataLong = self.jobsData.melt(id_vars = ['מקצוע','שלב'], value_vars = ['21א','21ב'], value_name = 'כמות')
-        #getting the branches data by calling the mergeBranchesData method. Also saving the data in a long data format
+        #getting the branches data by calling the mergeBranchesData method. Also saving the data in a long data format.
         self.branchesData = self.mergeBranchesData(plan_data, exec_data, placement_data)
         self.branchesDataLong = self.branchesData.melt(id_vars = ['סמכות','שלב'], value_vars = ['21א','21ב'], value_name = 'כמות')
-    
+
     #a function to transform the data into the necessary data for the jobs view
     def mergeJobsData(self, plan_data: pd.DataFrame, exec_data: pd.DataFrame, placement_data: pd.DataFrame):
         #summing up the important data by creating a pivot table indexed by the jobs and seperated into medians
