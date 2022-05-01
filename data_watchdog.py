@@ -12,21 +12,27 @@ class DataWatchdog(object):
         self.planData = pd.DataFrame.empty
         self.execData = pd.DataFrame.empty
         self.placementData = pd.DataFrame.empty
+
         #setting up the two DataFrames that will be used as base for the execution data
         self.jobCodex = pd.DataFrame.empty
         self.targetCodex = pd.DataFrame.empty
+
         #getting the data for the first time using the constant DATA_PATH
         self.readFiles(DATA_PATH)
     
     #the method used to access and read the data file
     def readFiles(self, path, queue = None):
+        #reading both files types with the matching functions
         self.readData(path)
         self.readCodex(path)
+
+        #if there is a queue then pass the data for the queue
         if queue is not None:
             queue.put([self.planData, self.execData, self.placementData, self.jobCodex, self.targetCodex])
     
+    #the method that reads the data files from a given path
     def readData(self, path):
-        #setting a try/catch block in order to make sure the program won't crash if the files couldn't be loaded as intended
+        #setting a try/catch block in order to make sure the program won't crash if the files couldn't be loaded
         try:
             #replacing the data with the new data, by reading the Excel data file
             self.planData = pd.read_excel(path, sheet_name = 'סטים')
@@ -36,8 +42,9 @@ class DataWatchdog(object):
             #in the case of an exception, printing an error message
             path(f"Data file doesn't exist in the directory {path}")
     
+    #the method that reads the codex files from a given path
     def readCodex(self, path):
-        #setting a try/catch block in order to make sure the program won't crash if the files couldn't be loaded as intended
+        #setting a try/catch block in order to make sure the program won't crash if the files couldn't be loaded
         try:
             #replacing the data with the new data, by reading the Excel data file
             self.targetCodex = pd.read_excel(path, sheet_name = 'מסד יעדים')
@@ -57,6 +64,7 @@ class DataWatchdog(object):
         #setting the event handler for our watchdog.
         #First, making it a pattern matching event handler that will only look at Excel files
         event_handler = PatternMatchingEventHandler(patterns = ["Data*.xlsx"], ignore_patterns = [], ignore_directories = True)
+
         #Second, replacing the on_created and on_modified methods with readFiles
         #This will make the watchdog try and read the data files everytime an Excel file is created or modified
         event_handler.on_created = self.readFiles(DATA_PATH, queue)
@@ -66,8 +74,10 @@ class DataWatchdog(object):
         observer = Observer()
         observer.schedule(event_handler, path, recursive = True)
         observer.daemon = True
+
         #starting the observer
         observer.start()
+
         #setting the observer loop to be infinite, except when the user does a KeyboardInterrupt
         #TODO: try setting up a flag instead
         try:
@@ -85,6 +95,6 @@ class DataWatchdog(object):
     def getCodex(self) -> List[pd.DataFrame]:
         return [self.jobCodex, self.targetCodex]
 
-
+#a simple check for the class
 if __name__ == "__main__":
     inst = DataWatchdog()
