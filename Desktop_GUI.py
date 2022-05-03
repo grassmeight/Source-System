@@ -1,5 +1,6 @@
 from PyQt5 import QtCore as qtc
 from PyQt5 import QtWidgets as qtw
+from PyQt5 import QtGui as qtg 
 from PyQt5 import uic
 from data_analyst import *
 from data_watchdog import *
@@ -36,13 +37,21 @@ class PandasModel(qtc.QAbstractTableModel):
                 return qtc.QVariant(str(self.dataFrame.iloc[index.row()][index.column()]))
             if (role == qtc.Qt.TextAlignmentRole):
                 return qtc.QVariant(qtc.Qt.AlignHCenter + qtc.Qt.AlignVCenter)
+            if (role == qtc.Qt.FontRole):
+                font = qtg.QFont()
+                font.setWeight(qtg.QFont.DemiBold)
+                return font
         return qtc.QVariant()
     
     def headerData(self, section, orientation, role = qtc.Qt.DisplayRole):
         if (orientation == qtc.Qt.Horizontal and role == qtc.Qt.DisplayRole):
             return self.dataFrame.columns[section]
         if (orientation == qtc.Qt.Horizontal and role == qtc.Qt.TextAlignmentRole):
-                return qtc.QVariant(qtc.Qt.AlignHCenter + qtc.Qt.AlignVCenter)
+            return qtc.QVariant(qtc.Qt.AlignHCenter + qtc.Qt.AlignVCenter)
+        if (orientation == qtc.Qt.Horizontal and role == qtc.Qt.FontRole):
+            font = qtg.QFont()
+            font.setWeight(qtg.QFont.ExtraBold)
+            return font
         return None
 
 if __name__ == "__main__":
