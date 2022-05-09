@@ -14,7 +14,7 @@
    <string>Plan vs Reality</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QComboBox" name="comboBox">
+   <widget class="QComboBox" name="levelComboBox">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -24,30 +24,10 @@
      </rect>
     </property>
    </widget>
-   <widget class="QComboBox" name="comboBox_2">
+   <widget class="QComboBox" name="jobComboBox">
     <property name="geometry">
      <rect>
       <x>210</x>
-      <y>290</y>
-      <width>141</width>
-      <height>22</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="comboBox_3">
-    <property name="geometry">
-     <rect>
-      <x>430</x>
-      <y>290</y>
-      <width>141</width>
-      <height>22</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="comboBox_4">
-    <property name="geometry">
-     <rect>
-      <x>630</x>
       <y>290</y>
       <width>141</width>
       <height>22</height>
@@ -69,6 +49,55 @@
     <attribute name="horizontalHeaderStretchLastSection">
      <bool>true</bool>
     </attribute>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>270</y>
+      <width>141</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::RightToLeft</enum>
+    </property>
+    <property name="text">
+     <string>סינון שלב</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>270</y>
+      <width>141</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::RightToLeft</enum>
+    </property>
+    <property name="text">
+     <string>סינון מקצוע</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QWidget" name="gridLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>801</width>
+      <height>271</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="NigLayout"/>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

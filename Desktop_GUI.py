@@ -13,12 +13,28 @@ class MainWindow(qtw.QMainWindow):
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        
+
+        self.createTable(data)
+        self.createGraph(data)
+
+        self.show()
+    
+    def createGraph(self, data):
+        figure = sumBar("שלב", "כמות", data, ["תכנון","ביצוע","פיזור"])
+        figure.tight_layout()
+        self.canvas = FigureCanvasQTAgg(figure)
+        self.ui.NigLayout.addWidget(self.canvas)
+
+    def createTable(self, data):
         self.model = PandasModel(data)
         self.ui.tableView.setModel(self.model)
         self.ui.tableView.horizontalHeader().setSectionResizeMode(qtw.QHeaderView.Stretch)
 
-        self.show()
+        self.ui.levelComboBox.addItem("")
+        self.ui.jobComboBox.addItem("")
+
+        self.ui.levelComboBox.addItems(self.model.returnColumn("שלב").unique())
+        self.ui.jobComboBox.addItems(self.model.returnColumn("מקצוע").astype(str).unique())
 
 class PandasModel(qtc.QAbstractTableModel):
     def __init__(self, data, parent = None) -> None:
@@ -30,6 +46,14 @@ class PandasModel(qtc.QAbstractTableModel):
 
     def columnCount(self, parent = None) -> int:
         return self.dataFrame.columns.size
+    
+    def returnColumn(self, column):
+        if type(column) == str:
+            return self.dataFrame[column]
+    
+    def returnRow(self, row):
+        if type(row) == int:
+            return self.dataFrame.iloc[row]
     
     def data(self, index, role = qtc.Qt.DisplayRole):
         if (index.isValid()):
@@ -58,5 +82,5 @@ if __name__ == "__main__":
     watchdog = DataWatchdog()
     analyst = DataAnalyst(watchdog.getData()[0], watchdog.getData()[1], watchdog.getData()[2], watchdog.getCodex()[0], watchdog.getCodex()[1])
     app = qtw.QApplication(sys.argv)
-    mw = MainWindow(analyst.getData()[0])
+    mw = MainWindow(analyst.getDataLong()[0])
     sys.exit(app.exec())
